@@ -17,7 +17,7 @@ function removePath(p) {
 }
 
 const root = path.join(__dirname, '..');
-const candidates = ['dist/server', 'server', 'dist/.netlify/server', 'dist/functions/server'];
+const candidates = ['dist/server', 'server', 'dist/.netlify/server', 'dist/functions/server', 'dist/index.html'];
 
 let removedAny = false;
 for (const rel of candidates) {
