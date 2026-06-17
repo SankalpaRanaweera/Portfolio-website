@@ -10,6 +10,19 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // @cloudflare/vite-plugin builds from this — wrangler.jsonc main alone is insufficient.
 export default defineConfig({
   tanstackStart: {
+    // Keep the server entry pointing to `src/server` for SSR error handling.
     server: { entry: "server" },
   },
+  // Override Vite environments so the server build outputs to a hidden folder.
+  // This prevents creation of `dist/server` while still allowing any server
+  // artifacts to be generated and ignored by static hosts.
+  vite: {
+    environments: {
+      ssr: {
+        build: {
+          outDir: "dist/.server"
+        }
+      }
+    }
+  }
 });
