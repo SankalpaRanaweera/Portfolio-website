@@ -6,7 +6,12 @@ const extracurricular = [
 
 const languages = ["Sinhala", "English"];
 
-const hobbies = ["Add your hobbies here"];
+const hobbies = [
+  "Playing cricket",
+  "Swimming",
+  "Photography",
+  "Traveling",
+];
 
 export function Bento() {
   return (
@@ -47,11 +52,16 @@ export function Bento() {
             </div>
           </div>
 
-          {/* Tooling — large panel on the right */}
+          {/* Services — large panel on the right */}
           <div className="relative col-span-1 row-span-2 overflow-hidden rounded-3xl glass p-8 md:col-span-2 md:row-span-2">
-            <div className="font-mono text-[11px] uppercase tracking-widest text-cream/40">Tooling</div>
+            <div className="font-mono text-[11px] uppercase tracking-widest text-cream/40">Services</div>
             <ul className="mt-6 space-y-3 font-display text-2xl text-cream md:text-3xl">
-              {['Figma · Rive · Cavalry', 'React · GLSL · Three.js', 'After Effects · Blender', 'Mechanical pencils'].map((s) => (
+              {[
+                'UI/UX Design · Frontend Development',
+                '3D & Motion · Animation',
+                'Prototyping · R&D',
+                'Branding · Visual Identity',
+              ].map((s) => (
                 <li key={s} className="flex items-center gap-3">
                   <span className="h-1.5 w-1.5 rounded-full bg-lime" />
                   {s}

@@ -55,11 +55,11 @@ export function Experience() {
 
   return (
     <section id="experience" className="relative px-6 pt-32 md:px-10">
-      {/* Decorative background glows */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 rounded-3xl bg-black/60 z-0" />
       <div className="pointer-events-none absolute left-1/3 top-1/2 -z-10 h-96 w-96 -translate-y-1/2 rounded-full bg-lime/5 blur-[120px]" />
       <div className="pointer-events-none absolute right-10 top-1/4 -z-10 h-72 w-72 rounded-full bg-cream/5 blur-[100px]" />
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl relative z-10">
         {/* Section Header */}
         <div className="mb-20 flex flex-wrap items-end justify-between gap-6">
           <div>

@@ -5,43 +5,45 @@ const projects = [
     title: "Construction Company System",
     desc: "A full-stack Construction Management System to manage raw materials, consuming items, customers, and overall construction site operations efficiently.",
     stack: ["React", "Laravel", "MySQL"],
-    year: "2025",
-    link: "#",
+    year: "2026",
+    link: "https://github.com/SankalpaRanaweera/Construction_company_system",
   },
   {
     title: "Bakery System",
     desc: "A full-stack Bakery Management System to manage bakery items, customers, sales, and daily business operations efficiently.",
     stack: ["React", "Laravel", "MySQL"],
     year: "2025",
-    link: "#",
+    link: "https://github.com/SankalpaRanaweera/Bakery_system",
   },
   {
     title: "Pharmacy System",
     desc: "A Pharmacy POS System built to manage sales, inventory, and pharmacy operations efficiently.",
     stack: ["React", "Laravel", "MySQL"],
-    year: "2024",
-    link: "#",
+    year: "2025",
+    link: "https://github.com/SankalpaRanaweera/Pharmacy_System",
   },
   {
     title: "Educational Institute System",
     desc: "A web-based Educational Institute Management System built to manage students, teachers, monthly profit, expenses, and overall institute operations efficiently.",
     stack: ["Laravel", "MySQL"],
     year: "2024",
-    link: "#",
+    link: "https://github.com/SankalpaRanaweera/Educational_instritute_system",
   },
   {
     title: "Capacity Study System",
     desc: "A web application built to allow IE members to track machine operators' hourly production, team records, and past production details.",
     stack: ["MongoDB", "Express.js", "React", "Node.js"],
     year: "2024",
-    link: "#",
+    link: "https://github.com/SankalpaRanaweera/company_system2",
   },
 ];
 
 export function Projects() {
   return (
     <section id="projects" className="relative px-6 py-24 md:px-10">
-      <div className="mx-auto max-w-7xl">
+      {/* dark overlay to reduce background-image brightness */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 rounded-3xl bg-black/60" />
+      <div className="relative z-10 mx-auto max-w-7xl">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-lime">⁠— 03 / Projects</div>

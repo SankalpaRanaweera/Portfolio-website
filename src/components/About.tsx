@@ -18,7 +18,7 @@ const milestones: Milestone[] = [
   {
     year: "2018",
     title: "G.C.E Advanced Level",
-    body: "Completed G.C.E Advanced Levels at Bandaranayake College Gampaha, focusing on Physical Science and Information & Communication Technology.",
+    body: "Completed G.C.E Advanced Levels at Bandaranayake College Gampaha, focusing on Science for Technology, Engineering Technology and Information & Communication Technology.",
     meta: "School",
   },
   {
@@ -68,7 +68,7 @@ export function About() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="md:col-span-5">
             <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-lime">⁠— 02 / Education</div>
-            <h2 className="mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-cream md:text-7xl">
+            <h2 className="mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-cream md:text-7xl md:whitespace-nowrap">
               Academic{" "}
               <span style={{ fontFamily: "'Instrument Serif', serif" }} className="italic text-lime/90">
                 journey

@@ -1,5 +1,5 @@
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, type Variants } from "framer-motion";
+import { useRef, useEffect } from "react";
 import { Magnetic } from "./Magnetic";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -35,20 +35,233 @@ function RevealLine({ text, baseDelay = 0 }: { text: string; baseDelay?: number 
   );
 }
 
+function ImagePanel() {
+  const ref = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), { stiffness: 120, damping: 20 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 120, damping: 20 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="hidden md:block absolute inset-y-0 right-0 w-[52%]"
+      style={{ perspective: 1200 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.3, duration: 1.0 }}
+    >
+      {/* Clip-path wipe reveal */}
+      <motion.div
+        className="h-full w-full relative overflow-hidden"
+        initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
+        animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
+        transition={{ delay: 0.5, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {/* 3D tilt on hover — use intrinsic image size (no scaling) */}
+        <motion.div
+          className="relative inline-block"
+          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        >
+          <img
+            src="/images/1.png"
+            alt="H.R.R.S Ranaweera"
+            className="block w-[460px] h-[460px] object-contain mt-24 ml-32"
+          />
+
+          {/* Subtle grain overlay */}
+          <div className="absolute inset-0 bg-grain opacity-20 pointer-events-none" />
+        </motion.div>
+
+        
+      {/*<div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-ink via-ink/70 to-transparent pointer-events-none z-10" />
+
+        
+        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-ink/90 to-transparent pointer-events-none z-10" />
+
+        
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink/50 to-transparent pointer-events-none z-10" /> */}
+      </motion.div>
+
+      {/* Lime accent line — animates up from bottom */}
+      <motion.div
+        className="absolute inset-y-0 left-0 w-[2px] bg-lime z-20"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        style={{ originY: 1 }}
+        transition={{ delay: 1.3, duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+      />
+
+      {/* Floating badge — bottom left, overlaps the seam */}
+      <motion.div
+        initial={{ opacity: 0, y: 24, x: -24 }}
+        animate={{ opacity: 1, y: 0, x: 0 }}
+        transition={{ delay: 1.7, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute bottom-10 left-[-1.25rem] z-30"
+      >
+        <div className="flex items-center gap-3 rounded-2xl border border-lime/20 bg-ink/80 px-4 py-3 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-lime/10 border border-lime/30">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 text-lime" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+          </div>
+          <div>
+            <p className="font-mono text-[10px] text-cream/40 uppercase tracking-widest leading-none mb-1">Role</p>
+            <p className="font-mono text-xs font-bold text-cream leading-none">Full-Stack Engineer</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Floating experience pill — mid-right */}
+      <motion.div
+        initial={{ opacity: 0, x: 24 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1.9, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute top-1/2 right-8 z-30 -translate-y-1/2"
+      >
+        <div className="flex flex-col items-center gap-1 rounded-2xl border border-cream/10 bg-ink/70 px-4 py-3 backdrop-blur-md">
+          <span className="font-display text-3xl font-bold text-lime leading-none">1+</span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-cream/40 whitespace-nowrap">Years Exp.</span>
+        </div>
+      </motion.div>
+
+      {/* Year stamp — top right */}
+      {/* <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2.0, duration: 0.8 }}
+        className="absolute top-8 right-8 z-30 text-right"
+      >
+        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-cream/30">Sri Lanka</p>
+        <p className="font-display text-2xl font-bold text-lime/30 leading-none">2026</p>
+      </motion.div> */}
+
+      {/* Ambient lime glow behind */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {/* Primary lime glow */}
+        <div className="absolute right-0 top-1/2 h-[80vh] w-[40vw] -translate-y-1/2 bg-lime/5 blur-[100px]" />
+        
+        {/* Secondary gradient overlay — top to bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-lime/10 via-transparent to-lime/5" />
+        
+        {/* Radial glow from top-right corner */}
+        <div className="absolute -top-32 -right-32 h-[60vh] w-[60vh] rounded-full bg-lime/8 blur-[120px]" />
+        
+        {/* Ambient accent — right edge glow */}
+        <div className="absolute right-0 top-0 h-full w-48 bg-gradient-to-l from-lime/8 to-transparent" />
+      </div>
+
+      {/* Animated background elements */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        {/* Floating animated circle 1 */}
+        <motion.div
+          className="absolute rounded-full bg-lime/20 blur-3xl"
+          style={{
+            width: "400px",
+            height: "400px",
+            top: "-50px",
+            right: "-150px",
+          }}
+          animate={{
+            y: [0, 60, 0],
+            x: [-30, 30, -30],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Floating animated circle 2 */}
+        <motion.div
+          className="absolute rounded-full bg-lime/15 blur-3xl"
+          style={{
+            width: "350px",
+            height: "350px",
+            bottom: "10%",
+            right: "-50px",
+          }}
+          animate={{
+            y: [0, -60, 0],
+            x: [40, -40, 40],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+
+        {/* Floating animated circle 3 */}
+        <motion.div
+          className="absolute rounded-full bg-lime/10 blur-3xl"
+          style={{
+            width: "300px",
+            height: "300px",
+            top: "40%",
+            right: "8%",
+          }}
+          animate={{
+            y: [0, 50, 0],
+            x: [-40, 40, -40],
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5,
+          }}
+        />
+      </div>
+
+      {/* Decorative dot grid — top-left corner of image */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.1, duration: 1.0 }}
+        className="absolute top-10 left-8 z-20 pointer-events-none"
+      >
+        <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+          {Array.from({ length: 4 }).map((_, row) =>
+            Array.from({ length: 4 }).map((_, col) => (
+              <circle
+                key={`${row}-${col}`}
+                cx={col * 16 + 8}
+                cy={row * 16 + 8}
+                r="1.5"
+                fill="currentColor"
+                className="text-lime/30"
+              />
+            ))
+          )}
+        </svg>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
-  const navItems = ["Home", "Summary", "Experience", "Skills", "Links"];
-  const navIcons: Record<string, string> = {
-    Home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
-    Summary: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
-    Experience: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
-    Skills: "M13 10V3L4 14h7v7l9-11h-7z",
-    Links: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1",
-  };
 
   return (
     <section ref={ref} className="relative min-h-screen overflow-hidden">
@@ -82,9 +295,6 @@ export function Hero() {
                 Open to work
               </span>
             </div>
-
-            {/* Download CV */}
-            
           </motion.div>
 
           {/* ── MIDDLE CONTENT ── */}
@@ -133,7 +343,7 @@ export function Hero() {
               and high-performance user interfaces.
             </motion.p>
 
-            {/* Contact info grid (populated from CV) */}
+            {/* Contact info grid */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -176,12 +386,14 @@ export function Hero() {
                       {label}
                     </a>
                   ) : (
-                    <span className="font-mono text-[11px] text-cream/60 hover:text-cream transition-colors">{label}</span>
+                    <span className="font-mono text-[11px] text-cream/60">{label}</span>
                   )}
                 </div>
               ))}
             </motion.div>
           </motion.div>
+
+          {/* Download CV */}
           <Magnetic strength={0.4}>
             <a
               href="/resume.md"
@@ -195,92 +407,11 @@ export function Hero() {
               Download CV
             </a>
           </Magnetic>
-
-          {/* ── NAV TABS (bottom) ── */}
-          {/* <motion.nav
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.9 }}
-            className="mt-10"
-          >
-            <div className="inline-flex items-center gap-1 rounded-full border border-cream/10 bg-cream/5 p-1.5 backdrop-blur-sm">
-              {navItems.map((item, i) => (
-                <Magnetic key={item} strength={0.3}>
-                  <a
-                    href={`#${item.toLowerCase()}`}
-                    className={`flex items-center gap-1.5 rounded-full px-3 py-2 font-mono text-[10px] uppercase tracking-widest transition-all ${
-                      i === 0
-                        ? "bg-cream text-ink"
-                        : "text-cream/50 hover:text-cream hover:bg-cream/10"
-                    }`}
-                  >
-                    <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d={navIcons[item]} />
-                    </svg>
-                    {item}
-                  </a>
-                </Magnetic>
-              ))}
-            </div>
-          </motion.nav> */}
         </div>
       </motion.div>
 
-      {/* ── RIGHT PANEL — full-bleed photo ── */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[50%] md:block">
-        {/* Replace the src below with your actual photo */}
-        <div className="relative h-full w-full overflow-hidden">
-          {/* Placeholder gradient — swap for <img> with your real photo */}
-          <div className="absolute inset-0 bg-gradient-to-br from-ink via-neutral-800 to-neutral-900" />
-
-          {/* Vignette overlay — left edge bleeds into left panel */}
-          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/30 to-transparent" />
-
-          {/* Bottom vignette */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-ink/60 to-transparent" />
-
-          {/* Lime ambient glow behind subject */}
-          <div className="absolute right-0 top-1/2 h-[60vh] w-[40vw] -translate-y-1/2 rounded-full bg-lime/10 blur-[120px]" />
-
-          {/*
-            ── USAGE ──
-            Replace the gradient div above with your actual photo:
-
-            <img
-              src="/your-photo.jpg"
-              alt="H.R.R.S Ranaweera"
-              className="h-full w-full object-cover object-top"
-            />
-          */}
-        </div>
-
-        {/* Decorative corner label */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 1 }}
-          className="absolute bottom-8 right-8 text-right font-mono text-[10px] uppercase tracking-[0.3em] text-cream/30"
-        >
-          <div>Sri Lanka</div>
-          <div className="text-lime">✦ 2026</div>
-        </motion.div>
-      </div>
-
-      {/* ── MARQUEE (bottom full-width) ── */}
-      {/* <div className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden border-y border-lime/20 bg-lime/5 py-4 backdrop-blur">
-        <div className="marquee flex whitespace-nowrap font-display text-2xl font-bold uppercase tracking-tight text-cream/90 md:text-3xl">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <span key={i} className="flex shrink-0 items-center gap-8 pr-8">
-              {["React.js", "Laravel", "PHP", "Node.js", "Express.js", "Spring Boot", "MySQL", "MongoDB", "Full-Stack"].map((t, j) => (
-                <span key={j} className="flex items-center gap-8">
-                  <span>{t}</span>
-                  <span className="text-lime">✦</span>
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div> */}
+      {/* ── RIGHT PANEL — animated image ── */}
+      <ImagePanel />
     </section>
   );
 }

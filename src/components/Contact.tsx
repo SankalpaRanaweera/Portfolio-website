@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode, type FormEvent } from "react";
 import { Magnetic } from "./Magnetic";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -15,6 +15,34 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 export function Contact() {
   const [sent, setSent] = useState(false);
 
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (sent) return;
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    try {
+      const res = await fetch("https://formspree.io/f/mlgkvjdd", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        setSent(true);
+        form.reset();
+      } else {
+        console.error("Formspree error", res);
+        alert("Failed to send message — please try email.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error — please try email.");
+    }
+  };
+
   return (
     <section id="contact" className="relative overflow-hidden px-6 py-24 md:px-10 md:py-48">
       {/* glow bg */}
@@ -25,7 +53,7 @@ export function Contact() {
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
           <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-lime">⁠— 07 / Contact</div>
-          <h2 className="mx-auto mt-6 max-w-4xl font-display text-5xl font-bold leading-[0.9] tracking-tight text-cream md:text-[9rem]">
+          <h2 className="mx-auto mt-6 max-w-4xl font-display text-1xl font-bold leading-[0.9] tracking-tight text-cream md:text-[5rem]">
             Let's make{" "}
             <span style={{ fontFamily: "'Instrument Serif', serif" }} className="italic text-lime text-glow">
               something
@@ -37,16 +65,11 @@ export function Contact() {
           </p>
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSent(true);
-          }}
-          className="mx-auto mt-16 max-w-3xl space-y-5"
-        >
+        <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-3xl space-y-5">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <Field label="Name">
               <input
+                name="name"
                 required
                 className="block w-full rounded-2xl border border-cream/10 bg-cream/[0.02] px-5 py-4 text-cream outline-none transition-all focus:border-lime/60 focus:bg-lime/5 focus:shadow-[0_0_0_4px_oklch(0.92_0.24_130/0.12)]"
                 placeholder="Ada Lovelace"
@@ -54,6 +77,7 @@ export function Contact() {
             </Field>
             <Field label="Email">
               <input
+                name="email"
                 required
                 type="email"
                 className="block w-full rounded-2xl border border-cream/10 bg-cream/[0.02] px-5 py-4 text-cream outline-none transition-all focus:border-lime/60 focus:bg-lime/5 focus:shadow-[0_0_0_4px_oklch(0.92_0.24_130/0.12)]"
@@ -64,6 +88,7 @@ export function Contact() {
 
           <Field label="Subject">
             <input
+              name="subject"
               required
               className="block w-full rounded-2xl border border-cream/10 bg-cream/[0.02] px-5 py-4 text-cream outline-none transition-all focus:border-lime/60 focus:bg-lime/5 focus:shadow-[0_0_0_4px_oklch(0.92_0.24_130/0.12)]"
               placeholder="Job Opportunity / Project Request"
@@ -72,6 +97,7 @@ export function Contact() {
 
           <Field label="Message">
             <textarea
+              name="message"
               required
               rows={5}
               className="block w-full resize-none rounded-2xl border border-cream/10 bg-cream/[0.02] px-5 py-4 text-cream outline-none transition-all focus:border-lime/60 focus:bg-lime/5 focus:shadow-[0_0_0_4px_oklch(0.92_0.24_130/0.12)]"
@@ -85,7 +111,7 @@ export function Contact() {
                 Or email — <a href="mailto:sankalparanaweera9@gmail.com" className="hover:text-lime">sankalparanaweera9@gmail.com</a>
               </div>
               <div className="font-mono text-[11px] uppercase tracking-widest text-cream/40">
-                Phone — <a href="tel:+94789133858" className="hover:text-lime">+94 78 913 3858</a> · Naivala, Veyangoda
+                Phone — <a href="tel:+94789133858" className="hover:text-lime">+94 78 913 3858</a> · Naiwala, Veyangoda
               </div>
             </div>
             <Magnetic strength={0.4}>
@@ -127,7 +153,7 @@ export function Footer() {
           </a>
           <a
             className="hover:text-lime"
-            href="https://github.com/Sankalpa-Ranaweera"
+            href="https://github.com/SankalpaRanaweera"
             target="_blank"
             rel="noopener noreferrer"
             data-cursor="↗"

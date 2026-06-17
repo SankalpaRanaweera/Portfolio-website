@@ -7,27 +7,29 @@ const techSkills = [
   { name: "Java / Spring Boot", level: 78 },
   { name: "HTML / CSS", level: 92 },
   { name: "C++ / C#", level: 75 },
-  { name: "WordPress & Git", level: 88 },
+  { name: "WordPress", level: 88 },
 ];
 
 const softSkills = [
-  "Project Management",
-  "Teamwork",
-  "Time Management",
-  "Leadership",
-  "Effective Communication",
-  "Critical Thinking",
-];
-
-const tools = [
-  "Visual Studio Code",
-  "Git",
+   "Visual Studio Code",
+  "GitHub",
+   "GitHub Desktop",
+  "Google Colab",
   "Figma",
   "Canva",
   "Postman",
   "NetBeans",
   "Antigravity",
   "AI Development Tools",
+];
+
+const tools = [
+  "Project Management",
+  "Teamwork",
+  "Time Management",
+  "Leadership",
+  "Effective Communication",
+  "Critical Thinking",
 ];
 
 export function Skills() {
@@ -75,8 +77,8 @@ export function Skills() {
           {/* Soft skills */}
           <div className="rounded-3xl glass-lime p-8">
             <div className="mb-6 flex items-baseline justify-between">
-              <h3 className="font-display text-2xl font-semibold text-cream">Soft</h3>
-              <span className="font-mono text-[11px] uppercase tracking-widest text-cream/40">How I work</span>
+              <h3 className="font-display text-2xl font-semibold text-cream">Tools I reach for daily</h3>
+              <span className="font-mono text-[11px] uppercase tracking-widest text-cream/40">Stack</span>
             </div>
             <div className="flex flex-wrap gap-3">
               {softSkills.map((s, i) => (
@@ -96,8 +98,8 @@ export function Skills() {
           {/* Tools marquee */}
           <div className="relative overflow-hidden rounded-3xl glass p-8 lg:col-span-2">
             <div className="mb-6 flex items-baseline justify-between">
-              <h3 className="font-display text-2xl font-semibold text-cream">Tools I reach for daily</h3>
-              <span className="font-mono text-[11px] uppercase tracking-widest text-cream/40">Stack</span>
+              <h3 className="font-display text-2xl font-semibold text-cream">Soft Skills</h3>
+              <span className="font-mono text-[11px] uppercase tracking-widest text-cream/40">How I work</span>
             </div>
             <div className="relative overflow-hidden">
               <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-ink to-transparent" />
